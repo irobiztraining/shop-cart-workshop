@@ -69,7 +69,6 @@ async function request(path, method = "GET", body) {
     } catch (error) {
         throw new Error("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่", { cause: error });
     }
-
     let data;
     try {
         data = await response.json();
@@ -144,7 +143,6 @@ function renderCart(cart) {
         line.append(name, lineTotal, controls);
         return line;
     }));
-
     for (const field of ["subtotal", "discount", "shipping", "total"]) {
         document.querySelector(`[data-testid="cart-${field}"]`).textContent =
             formatTHB(cart[`${field}_satang`]);
@@ -173,7 +171,14 @@ async function changeCart(suffix, method, body) {
 }
 
 async function loadCart() {
-    const cartId = localStorage.getItem("cart_id");
+    let cartId;
+    try {
+        cartId = localStorage.getItem("cart_id");
+    } catch (error) {
+        throw new Error("ไม่สามารถอ่านตะกร้าในเบราว์เซอร์ได้ กรุณาตรวจสอบการตั้งค่า", {
+            cause: error,
+        });
+    }
     if (cartId) {
         try {
             return await request(`/api/carts/${encodeURIComponent(cartId)}`);

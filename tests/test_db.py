@@ -1,4 +1,5 @@
 import os
+import runpy
 import sqlite3
 import subprocess
 import sys
@@ -114,6 +115,24 @@ def test_seed_module_is_repeatable(db_path: Path) -> None:
             env=os.environ.copy(),
             check=True,
         )
+    with closing(get_connection()) as connection:
+        rows = connection.execute("SELECT * FROM products ORDER BY id").fetchall()
+    assert [tuple(row) for row in rows] == [
+        (1, "TSHIRT-01", "เสื้อยืดนักพัฒนา", 29900, 20),
+        (2, "MUG-01", "แก้วกาแฟ", 15900, 15),
+        (3, "EARBUD-01", "หูฟังไร้สาย", 129000, 5),
+        (4, "CABLE-01", "สายชาร์จ USB-C", 19900, 2),
+        (5, "STICKER-01", "สติกเกอร์", 100, 100),
+        (6, "TOTE-01", "กระเป๋าผ้า", 49900, 10),
+        (7, "KEYBOARD-01", "คีย์บอร์ด", 249000, 0),
+        (8, "MOUSE-01", "เมาส์", 59000, 8),
+    ]
+
+
+def test_seed_entrypoint_loads_products_from_spec(db_path: Path) -> None:
+    seed_script = Path(__file__).resolve().parents[1] / "app" / "seed.py"
+    runpy.run_path(str(seed_script), run_name="__main__")
+
     with closing(get_connection()) as connection:
         rows = connection.execute("SELECT * FROM products ORDER BY id").fetchall()
     assert [tuple(row) for row in rows] == [

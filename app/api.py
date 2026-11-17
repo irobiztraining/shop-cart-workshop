@@ -1,7 +1,5 @@
 import os
 import sqlite3
-from collections.abc import Iterator
-from contextlib import closing
 from datetime import datetime, timezone
 from typing import Annotated
 from uuid import uuid4
@@ -10,7 +8,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, ConfigDict, Field
 
 from app import repository
-from app.db import get_connection
+from app.db import get_db
 from app.pricing import (
     DISCOUNT_RATES,
     MIN_SUBTOTAL_FOR_DISCOUNT,
@@ -66,12 +64,6 @@ class DiscountIn(BaseModel):
     model_config = ConfigDict(strict=True)
 
     code: str
-
-
-def get_db() -> Iterator[sqlite3.Connection]:
-    with closing(get_connection()) as connection, connection:
-        repository.begin_transaction(connection)
-        yield connection
 
 
 Database = Annotated[sqlite3.Connection, Depends(get_db, scope="function")]

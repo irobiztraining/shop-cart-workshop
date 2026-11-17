@@ -135,6 +135,6 @@ def test_startup_initializes_database(db_path: Path) -> None:
         response = client.get("/health")
         assert response.status_code == 200
         assert response.json() == {"status": "ok"}
-        assert "<h1>Shop Cart</h1>" in client.get("/").text
+        assert "<h1>ร้านค้าและตะกร้าสินค้า</h1>" in client.get("/").text
         with closing(get_connection()) as connection:
             assert connection.execute("SELECT COUNT(*) FROM products").fetchone()[0] == 0

@@ -49,8 +49,8 @@
 
 ## API contract
 - GET    /health -> {"status": "ok"}
-- GET    /api/products
-- POST   /api/carts -> 201 {"cart_id": "<uuid>"}
+- GET    /api/products -> ProductOut[]
+- POST   /api/carts -> 201 CartOut (includes cart_id as a UUID string)
 - GET    /api/carts/{cart_id} -> items[] + subtotal_satang,
          discount_satang, shipping_satang, total_satang, discount_code
 - POST   /api/carts/{cart_id}/items  body {"product_id": int, "qty": int = 1}
@@ -61,3 +61,20 @@
 - POST   /api/test/reset  (only when APP_ENV=test) re-create DB + seed
 - Every cart endpoint returns the full cart, so the UI renders from
   one response.
+- CartOut: cart_id, items[], discount_code, subtotal_satang, discount_satang,
+  shipping_satang, total_satang.
+- ProductOut: id, sku, name, price_satang, stock.
+- Each cart item: product_id, sku, name, unit_price_satang, line_total_satang,
+  stock, qty. The API calculates line_total_satang using pricing; the browser
+  only formats monetary values and never calculates cart or line totals.
+- POST item qty is the quantity to add; PATCH qty replaces the line quantity.
+  Both require a positive integer. Values over 10 are handled by BR-03.
+- Errors use a top-level body {"detail": "<Thai message>", "code": "<CODE>"}:
+  - 404 CART_NOT_FOUND, PRODUCT_NOT_FOUND.
+  - 404 CART_ITEM_NOT_FOUND for PATCH/DELETE when the product exists but
+    is not in the cart.
+  - 409 QTY_LIMIT, OUT_OF_STOCK, MIN_SUBTOTAL.
+  - 422 INVALID_CODE for unknown discount codes.
+  - 422 INVALID_INPUT for malformed requests or invalid field values.
+- POST /api/test/reset returns {"status": "ok"} and is registered only when
+  APP_ENV=test at application import time.

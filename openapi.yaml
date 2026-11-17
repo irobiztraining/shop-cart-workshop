@@ -1,0 +1,381 @@
+openapi: 3.1.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Health Health Get
+  /api/products:
+    get:
+      summary: List Products
+      operationId: list_products_api_products_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ProductOut'
+                type: array
+                title: Response List Products Api Products Get
+  /api/carts:
+    post:
+      summary: Create Cart
+      operationId: create_cart_api_carts_post
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartOut'
+  /api/carts/{cart_id}:
+    get:
+      summary: Get Cart
+      operationId: get_cart_api_carts__cart_id__get
+      parameters:
+      - name: cart_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cart Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/carts/{cart_id}/items:
+    post:
+      summary: Add Item
+      operationId: add_item_api_carts__cart_id__items_post
+      parameters:
+      - name: cart_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cart Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddItemIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/carts/{cart_id}/items/{product_id}:
+    patch:
+      summary: Update Item
+      operationId: update_item_api_carts__cart_id__items__product_id__patch
+      parameters:
+      - name: cart_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cart Id
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateItemIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      summary: Delete Item
+      operationId: delete_item_api_carts__cart_id__items__product_id__delete
+      parameters:
+      - name: cart_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cart Id
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/carts/{cart_id}/discount:
+    put:
+      summary: Apply Discount
+      operationId: apply_discount_api_carts__cart_id__discount_put
+      parameters:
+      - name: cart_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cart Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      summary: Remove Discount
+      operationId: remove_discount_api_carts__cart_id__discount_delete
+      parameters:
+      - name: cart_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Cart Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AddItemIn:
+      properties:
+        product_id:
+          type: integer
+          title: Product Id
+        qty:
+          type: integer
+          minimum: 1.0
+          title: Qty
+          default: 1
+      type: object
+      required:
+      - product_id
+      title: AddItemIn
+    CartItemOut:
+      properties:
+        product_id:
+          type: integer
+          title: Product Id
+        sku:
+          type: string
+          title: Sku
+        name:
+          type: string
+          title: Name
+        unit_price_satang:
+          type: integer
+          title: Unit Price Satang
+        line_total_satang:
+          type: integer
+          title: Line Total Satang
+        stock:
+          type: integer
+          title: Stock
+        qty:
+          type: integer
+          title: Qty
+      type: object
+      required:
+      - product_id
+      - sku
+      - name
+      - unit_price_satang
+      - line_total_satang
+      - stock
+      - qty
+      title: CartItemOut
+    CartOut:
+      properties:
+        cart_id:
+          type: string
+          title: Cart Id
+        items:
+          items:
+            $ref: '#/components/schemas/CartItemOut'
+          type: array
+          title: Items
+        discount_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Discount Code
+        subtotal_satang:
+          type: integer
+          title: Subtotal Satang
+        discount_satang:
+          type: integer
+          title: Discount Satang
+        shipping_satang:
+          type: integer
+          title: Shipping Satang
+        total_satang:
+          type: integer
+          title: Total Satang
+      type: object
+      required:
+      - cart_id
+      - items
+      - discount_code
+      - subtotal_satang
+      - discount_satang
+      - shipping_satang
+      - total_satang
+      title: CartOut
+    DiscountIn:
+      properties:
+        code:
+          type: string
+          title: Code
+      type: object
+      required:
+      - code
+      title: DiscountIn
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ProductOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        sku:
+          type: string
+          title: Sku
+        name:
+          type: string
+          title: Name
+        price_satang:
+          type: integer
+          title: Price Satang
+        stock:
+          type: integer
+          title: Stock
+      type: object
+      required:
+      - id
+      - sku
+      - name
+      - price_satang
+      - stock
+      title: ProductOut
+    UpdateItemIn:
+      properties:
+        qty:
+          type: integer
+          minimum: 1.0
+          title: Qty
+      type: object
+      required:
+      - qty
+      title: UpdateItemIn
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

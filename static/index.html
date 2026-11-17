@@ -1,13 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Cart</title>
+    <title>ร้านค้าและตะกร้าสินค้า</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
 </head>
 <body>
-    <main>
-        <h1>Shop Cart</h1>
+    <main class="shop">
+        <header class="shop-header">
+            <h1>ร้านค้าและตะกร้าสินค้า</h1>
+            <p>เลือกสินค้าและตรวจสอบยอดสั่งซื้อของคุณ</p>
+        </header>
+        <p id="error-message" class="error" role="alert"
+           data-testid="error-message" hidden></p>
+        <p id="loading-status" role="status">กำลังโหลดสินค้าและตะกร้า…</p>
+
+        <div class="shop-layout">
+            <section aria-label="รายการสินค้า">
+                <h2>รายการสินค้า</h2>
+                <fieldset id="product-controls" disabled>
+                    <legend class="sr-only">เลือกสินค้า</legend>
+                    <div id="product-list" class="product-grid"></div>
+                </fieldset>
+            </section>
+
+            <section class="cart" aria-label="ตะกร้าสินค้า">
+                <h2>ตะกร้าสินค้า</h2>
+                <fieldset id="cart-controls" disabled>
+                    <legend class="sr-only">จัดการตะกร้าสินค้า</legend>
+                    <p id="empty-cart" class="empty-cart" data-testid="empty-cart" hidden>
+                        ยังไม่มีสินค้าในตะกร้า
+                    </p>
+                    <div id="cart-lines" class="cart-lines"></div>
+
+                    <form id="discount-form" class="discount-form">
+                        <label for="discount-input">โค้ดส่วนลด</label>
+                        <div class="discount-controls">
+                            <input id="discount-input" name="discount-code" type="text"
+                                   autocomplete="off" spellcheck="false"
+                                   data-testid="discount-input">
+                            <button type="submit" data-testid="apply-discount">ใช้โค้ด</button>
+                        </div>
+                    </form>
+                    <p id="discount-status" role="status" hidden></p>
+                </fieldset>
+
+                <dl class="cart-totals" aria-live="polite">
+                    <div><dt>ยอดรวมย่อย</dt><dd data-testid="cart-subtotal">-</dd></div>
+                    <div><dt>ส่วนลด</dt><dd data-testid="cart-discount">-</dd></div>
+                    <div><dt>ค่าส่ง</dt><dd data-testid="cart-shipping">-</dd></div>
+                    <div class="grand-total">
+                        <dt>ยอดสุทธิ</dt><dd data-testid="cart-total">-</dd>
+                    </div>
+                </dl>
+                <p class="vat-note">ราคาสินค้ารวมภาษีมูลค่าเพิ่มแล้ว</p>
+            </section>
+        </div>
     </main>
 </body>
 </html>

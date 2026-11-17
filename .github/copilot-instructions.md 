@@ -1,0 +1,45 @@
+# Team rules: shop-cart
+
+## Context
+- Shopping cart demo for an e-commerce course. Day 2 adds automated tests,
+  so every change must stay easy to test.
+- Stack: Python 3.12, FastAPI, Pydantic v2, SQLite via the standard `sqlite3`
+  module (no ORM), plain HTML/CSS/JavaScript (no framework, no build step).
+- Run: `uvicorn app.main:app --reload --port 8080`
+- Business rules live in docs/requirements.md. If a rule is missing or unclear,
+  ask me. Never invent a business rule.
+
+## Structure
+- app/main.py: create the FastAPI app, include the API router, then mount
+  static/ at "/" as the LAST line.
+- app/db.py: connection + schema. app/seed.py: sample products.
+- app/repository.py: ALL SQL lives here. No SQL anywhere else.
+- app/pricing.py: pure functions only (no DB, no I/O, no FastAPI imports).
+- app/api.py: REST endpoints under /api. Thin: validate, call repository
+  and pricing, return.
+- static/: index.html, app.js, styles.css.
+
+## Rules
+- Money is an integer number of satang (1 THB = 100 satang) everywhere.
+  Never use float for money. Field names end with `_satang`.
+  Format to "฿1,234.50" only in the UI.
+- SQL uses `?` placeholders only. Never build SQL with f-strings or `+`.
+- Validate input with Pydantic models.
+- Errors: 404 not found, 409 business-rule violation, 422 invalid input.
+  Body: {"detail": "<Thai message>", "code": "<UPPER_SNAKE_CODE>"}.
+- Type hints on every Python function. snake_case in Python, camelCase in JS.
+- No secrets in code. Config comes from environment variables.
+- Do not add a dependency without telling me why.
+
+## Front end (must work with Playwright later)
+- Semantic HTML: <button>, <label for>, <main>, <section aria-label>.
+- Every interactive element and every money value has a stable
+  kebab-case `data-testid`, e.g. `add-to-cart-3`, `cart-total`.
+- All user-visible text is Thai.
+- Show API errors in one element with role="alert" and
+  data-testid="error-message".
+- No inline onclick. Add event listeners in app.js.
+
+## How to work with me
+- Before creating or changing more than 3 files, show a short plan first.
+- After a change, list the files you touched in one short summary.

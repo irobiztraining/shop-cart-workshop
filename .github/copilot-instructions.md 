@@ -43,3 +43,24 @@
 ## How to work with me
 - Before creating or changing more than 3 files, show a short plan first.
 - After a change, list the files you touched in one short summary.
+
+
+## Tests
+- Python tests use pytest.
+  tests/unit/ = pure functions only (no DB, no client).
+  tests/api/  = FastAPI TestClient through the fixtures in tests/conftest.py
+  and the CartApi helper in tests/helpers.py. Never set up a DB or a
+  client inside a test file. Product ids come from tests/catalog.py.
+- Expected values come from docs/requirements.md, never from reading the
+  implementation. If the spec does not say, ask me.
+- Test name: test_<ac-or-br-id>_<behavior>,
+  e.g. test_ac04_increase_beyond_stock_returns_409.
+- One scenario = one test. Boundary tables use @pytest.mark.parametrize
+  with an id for every row.
+- An API test asserts the status code, the error `code` or the money
+  fields, and the side effect (e.g. qty is still 2 after a 409).
+- E2E tests: Playwright + TypeScript in e2e/. Use the page object in
+  e2e/pages/. Title "should <behavior>" + tag "@AC-xx".
+  Never use waitForTimeout. Reset data with POST /api/test/reset.
+- Never change code in app/ to make a test pass. Report the failure and
+  the rule it breaks instead.
